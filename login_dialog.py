@@ -5,21 +5,19 @@ from signup_dialog import SignupDialog
 class LoginDialog(QDialog):
     def __init__(self, parent = None):
         super().__init__(parent)
-        self.setWindowTitle("재고관리 프로그램")
+        self.setWindowTitle("관리자 로그인")
         self.db = DB(**DB_CONFIG)
         
-        self.username = QLineEdit()
-        self.password = QLineEdit()
+        self.username = self.create_line_edit("아이디")
+        self.password = self.create_line_edit("비밀번호")
         self.password.setEchoMode(QLineEdit.Password)
         
         form = QFormLayout()
         form.addRow("아이디", self.username)
         form.addRow("비밀번호", self.password)
         
-        self.btn_login = QPushButton("로그인")
-        self.btn_login.clicked.connect(self.try_login)
-        
-        self.btn_signup = QPushButton("회원가입")
+        self.btn_login = self.create_button("로그인", self.try_login)
+        self.btn_signup = self.create_button("회원가입", self.signup)
         self.btn_signup.clicked.connect(self.signup)
         
         layout = QVBoxLayout()
@@ -27,6 +25,45 @@ class LoginDialog(QDialog):
         layout.addWidget(self.btn_login)
         layout.addWidget(self.btn_signup)
         self.setLayout(layout)
+        
+    def create_line_edit(self, placeholder_text):
+        line_edit = QLineEdit()
+        line_edit.setPlaceholderText(placeholder_text)
+        line_edit.setStyleSheet("""
+            QLineEdit {
+                padding: 10px;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }                      
+            QLineEdit:focus {
+                border-color: #4CAF50;
+            }  
+        """)
+        return line_edit
+    
+    def create_button(self, text, action):
+        button = QPushButton(text)
+        button.setStyleSheet("""
+            QPushButton {
+                padding: 10px 20px;
+                font-size: 14px;
+                background-color: #4CAF50;
+                color: white;
+                border-radius: 5px;
+                border: none;
+                min-width: 120px;
+                margin: 10px 0;
+            }               
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+            QPuchButton:disabled {
+                background-color: #ddd;
+            }
+        """)
+        button.clicked.connect(action)
+        return button
         
     def try_login(self):
         uid = self.username.text().strip()

@@ -1,12 +1,49 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem, \
-    QLabel, QLineEdit, QPushButton, QMessageBox, QMenuBar, QAction
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
+    QLabel, QLineEdit, QPushButton, QMessageBox, QMenuBar, QAction, QScrollArea
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QIcon
+from PyQt5.QtCore import Qt
 from db_helper import DB, DB_CONFIG
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("재고 관리 프로그램")
+        self.setWindowTitle("재고 관리 프로그램(관리자)")
+        self.setWindowIcon(QIcon('home.png'))
+        # 윈도우 스타일 설정
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #f4f4f4;
+            }
+            QPushButton {
+                border-radius: 5px;
+                padding: 10px;
+                background-color: #4CAF50;
+                color: white;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+            QLineEdit {
+                padding: 10px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                font-size: 14px;
+            }
+            QTableWidget {
+                background-color: white;
+                border-radius: 5px;
+                font-size: 14px;
+                padding: 10px;
+            }
+            QTableWidget::item {
+                padding: 10px;
+            }
+            QLabel {
+                font-size: 14px;
+            }
+        """)
+        
         self.db = DB(**DB_CONFIG)
         
         central = QWidget()
@@ -14,24 +51,19 @@ class MainWindow(QMainWindow):
         vbox = QVBoxLayout(central)
         
         form_box = QHBoxLayout()
-        self.input_name = QLineEdit()
-        self.input_price = QLineEdit()
-        self.input_stock = QLineEdit()
-        self.btn_add = QPushButton("추가")
-        self.btn_add.clicked.connect(self.add_clothes)
-        self.btn1_add = QPushButton("선택항목 삭제")
+        self.input_name = self.create_line_edit("상품명")
+        self.input_price = self.create_line_edit("가격")
+        self.input_stock = self.create_line_edit("재고량")
+        self.btn_add = self.create_button("추가", self.add_clothes)
+        self.btn1_add = self.create_button("선택항목 삭제", self.checked_item_delete)
         self.btn1_add.clicked.connect(self.checked_item_delete)
         
         form_box1 = QHBoxLayout()
-        self.edit_name = QLineEdit()
-        self.edit_price = QLineEdit()
-        self.edit_stock = QLineEdit()
-        self.btn_edit_load = QPushButton("선택항목 불러오기")
-        self.btn_edit_load.clicked.connect(self.edit_load)
-        self.btn_edit = QPushButton("선택항목 수정")
-        self.btn_edit.clicked.connect(self.checked_item_edit)
-        
-        
+        self.edit_name = self.create_line_edit("수정할 상품명")
+        self.edit_price = self.create_line_edit("수정할 가격")
+        self.edit_stock = self.create_line_edit("수정할 재고량")
+        self.btn_edit_load = self.create_button("선택항목 불러오기", self.edit_load)
+        self.btn_edit = self.create_button("선택항목 수정", self.checked_item_edit)
         
         form_box.addWidget(QLabel("상품명"))
         form_box.addWidget(self.input_name)
@@ -58,14 +90,52 @@ class MainWindow(QMainWindow):
         self.table.verticalHeader().setVisible(False)
         
         
-        
         vbox.addLayout(form_box)
         vbox.addLayout(form_box1)
         vbox.addWidget(self.table)
         
-        
         self.load_clothes()
+        
+        self.setMinimumSize(400, 400)
+        
+    def create_line_edit(self, placeholder_text):
+        line_edit = QLineEdit()
+        line_edit.setPlaceholderText(placeholder_text)
+        line_edit.setStyleSheet("""
+            QLineEdit {
+                padding : 5px;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }                    
+        """)
+        return line_edit
     
+    def create_button(self, text, action):
+        button = QPushButton(text)
+        button.setStyleSheet("""
+            QPushButton {
+                padding: 10px 20px;
+                font-size: 14px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                min-width: 120px;
+                margin: 5px
+            }              
+            QPushButton:hover {
+                background-color: #45a049;
+            }       
+            QPushButton:disabled {
+                background-color: #ddd;
+            }
+        """)
+        button.clicked.connect(action)
+        return button
+   
+   
+   
+   
     def load_clothes(self):
         rows = self.db.fetch_clothes()
         print(type(rows))
@@ -79,7 +149,15 @@ class MainWindow(QMainWindow):
             check_item = QTableWidgetItem()
             check_item.setCheckState(False)
             self.table.setItem(r, 4, check_item)
+            
+        self.table.resizeRowsToContents()    
         self.table.resizeColumnsToContents()
+        
+        self.table.setColumnWidth(0, 200)
+        self.table.setColumnWidth(1, 350)
+        self.table.setColumnWidth(2, 200)
+        self.table.setColumnWidth(3, 200)
+        self.table.setColumnWidth(4, 172)
         
     def checked_item_edit(self):
         edit_name = self.edit_name.text().strip()
@@ -87,7 +165,11 @@ class MainWindow(QMainWindow):
         edit_stock = self.edit_stock.text().strip()
         
         ok = self.db.edit_item(edit_name, edit_price, edit_stock)
-        if ok:
+        
+        if not edit_name or not edit_price or not edit_stock:
+            QMessageBox.critical(self, "주의", "수정할 값을 입력하세요.")
+        
+        elif ok:
             QMessageBox.information(self, "완료", "수정완료 되었습니다.")
             self.edit_name.clear()
             self.edit_price.clear()
@@ -133,7 +215,6 @@ class MainWindow(QMainWindow):
                     QMessageBox.information(self, "취소", "삭제가 취소되었습니다.")
                     
         self.load_clothes()
-        
         
     def add_clothes(self):
         name = self.input_name.text().strip()
