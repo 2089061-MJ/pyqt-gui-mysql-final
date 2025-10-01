@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QLineEdit, QPushButton, QMessageBox
+from PyQt5.QtGui import QIcon
 from db_helper import DB, DB_CONFIG
 from signup_dialog import SignupDialog
 
@@ -6,6 +7,8 @@ class LoginDialog(QDialog):
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setWindowTitle("관리자 로그인")
+        self.setWindowIcon(QIcon('home.png'))
+        
         self.db = DB(**DB_CONFIG)
         
         self.username = self.create_line_edit("아이디")
@@ -76,7 +79,7 @@ class LoginDialog(QDialog):
         if ok:
             self.accept()   # 다이얼로그 통과!
         else:
-            QMessageBox.critical(self, "실패", "아이디 또는 비밀번호가 올바르지 않습니다. ")
+            QMessageBox.critical(self, "로그인 실패", "아이디 또는 비밀번호가 올바르지 않습니다. ")
             
     def signup(self):
         signup_dialog = SignupDialog()

@@ -1,10 +1,12 @@
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QLineEdit, QPushButton, QMessageBox
 from db_helper import DB, DB_CONFIG
+from PyQt5.QtGui import QIcon
 
 class SignupDialog(QDialog):
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setWindowTitle("관리자 회원가입")
+        self.setWindowIcon(QIcon('home.png'))
         self.db = DB(**DB_CONFIG)
         
         self.signup_username = self.create_line_edit("아이디")
@@ -16,15 +18,12 @@ class SignupDialog(QDialog):
         form.addRow("비밀번호", self.signup_password)
         
         self.btn_signup = self.create_button("회원가입하기", self.signup_try)
+        #self.btn_login = self.create_button("로그인", self.login)
     
         layout = QVBoxLayout()
         layout.addLayout(form)
         layout.addWidget(self.btn_signup)
         self.setLayout(layout)
-        
-        
-        
-        
         
     def create_line_edit(self, placeholder_text):
         line_edit = QLineEdit()
@@ -85,4 +84,5 @@ class SignupDialog(QDialog):
         else:
             QMessageBox.critical(self, "오류", "회원가입에 실패하셨습니다.")
             
-        
+    
+    
