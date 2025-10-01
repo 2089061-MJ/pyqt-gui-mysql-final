@@ -1,10 +1,11 @@
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QLineEdit, QPushButton, QMessageBox
 from db_helper import DB, DB_CONFIG
+from signup_dialog import SignupDialog
 
 class LoginDialog(QDialog):
     def __init__(self, parent = None):
         super().__init__(parent)
-        self.setWindowTitle("로그인")
+        self.setWindowTitle("재고관리 프로그램")
         self.db = DB(**DB_CONFIG)
         
         self.username = QLineEdit()
@@ -18,9 +19,13 @@ class LoginDialog(QDialog):
         self.btn_login = QPushButton("로그인")
         self.btn_login.clicked.connect(self.try_login)
         
+        self.btn_signup = QPushButton("회원가입")
+        self.btn_signup.clicked.connect(self.signup)
+        
         layout = QVBoxLayout()
         layout.addLayout(form)
         layout.addWidget(self.btn_login)
+        layout.addWidget(self.btn_signup)
         self.setLayout(layout)
         
     def try_login(self):
@@ -30,9 +35,13 @@ class LoginDialog(QDialog):
             QMessageBox.warning(self, "오류", "아이디와 비밀번호를 모두 입력하세요")
             return
         
-        ok = self.db.verify_user(uid, pw)
+        ok = self.db.login_verify_user(uid, pw)
         if ok:
             self.accept()   # 다이얼로그 통과!
         else:
             QMessageBox.critical(self, "실패", "아이디 또는 비밀번호가 올바르지 않습니다. ")
             
+    def signup(self):
+        signup_dialog = SignupDialog()
+        if signup_dialog.exec_() == SignupDialog.Accepted:
+            self.show()
