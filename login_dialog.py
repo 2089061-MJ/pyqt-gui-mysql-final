@@ -21,7 +21,6 @@ class LoginDialog(QDialog):
         
         self.btn_login = self.create_button("로그인", self.try_login)
         self.btn_signup = self.create_button("회원가입", self.signup)
-        self.btn_signup.clicked.connect(self.signup)
         
         layout = QVBoxLayout()
         layout.addLayout(form)

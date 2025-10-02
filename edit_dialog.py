@@ -81,7 +81,7 @@ class EditDialog(QDialog):
             self.edit_name.clear()
             self.edit_price.clear()
             self.edit_stock.clear()
-            
+            self.accept()
         else:
             QMessageBox.critical(self, "실패", "수정 작업중에 오류가 발생하였습니다.")
-        self.accept()
+        
