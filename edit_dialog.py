@@ -63,9 +63,6 @@ class EditDialog(QDialog):
         # layout.addWidget(buttonBox)
         self.setLayout(layout)
         
-        
-        
-        
     def item_edit(self):
         edit_name = self.edit_name.text().strip()
         edit_price = self.edit_price.text().strip()
@@ -74,14 +71,14 @@ class EditDialog(QDialog):
         ok = self.db.edit_item(edit_name, edit_price, edit_stock)
         
         if not edit_name or not edit_price or not edit_stock:
-            QMessageBox.critical(self, "주의", "수정할 값을 입력하세요.")
+            QMessageBox.warning(self, "메시지", "수정할 값을 입력하세요.")
         
         elif ok:
-            QMessageBox.information(self, "완료", "수정완료 되었습니다.")
+            QMessageBox.information(self, "메시지", "수정완료 되었습니다.")
             self.edit_name.clear()
             self.edit_price.clear()
             self.edit_stock.clear()
             self.accept()
         else:
-            QMessageBox.critical(self, "실패", "수정 작업중에 오류가 발생하였습니다.")
+            QMessageBox.critical(self, "메시지", "수정 작업중에 오류가 발생하였습니다.")
         

@@ -69,20 +69,20 @@ class SignupDialog(QDialog):
         uid = self.signup_username.text().strip()
         pw = self.signup_password.text().strip()
         if not uid or not pw:
-            QMessageBox.warning(self, "오류", "아이디와 비밀번호를 모두 입력하세요.")
+            QMessageBox.warning(self, "메시지", "아이디와 비밀번호를 모두 입력하세요.")
             return
         
         ok = self.db.signup_verify_user(uid)
         if ok:
-            QMessageBox.critical(self, "경고", "아이디가 이미 존재합니다. 다른 아이디를 입력하세요.")
+            QMessageBox.critical(self, "메시지", "아이디가 이미 존재합니다. 다른 아이디를 입력하세요.")
             return
         
         ok1 = self.db.signup_user(uid, pw)
         if ok1:
-            QMessageBox.information(self, "회원가입 성공", "가입되셨습니다!")
+            QMessageBox.information(self, "메시지", f"{uid}님 회원가입되셨습니다! 로그인 화면으로 이동합니다.")
             self.accept()
         else:
-            QMessageBox.critical(self, "오류", "회원가입에 실패하셨습니다.")
+            QMessageBox.critical(self, "메시지", "회원가입에 실패하셨습니다.")
             
     
     

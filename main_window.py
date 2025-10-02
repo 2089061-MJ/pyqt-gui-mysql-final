@@ -114,18 +114,22 @@ class MainWindow(QMainWindow):
         item_delete = []
         for r in range(self.table.rowCount()):
             check_item = self.table.cellWidget(r, 4)
+            
             if check_item.checkState() == Qt.Checked:
                 mid = self.table.item(r, 0).text()
                 item_delete.append(mid)
                 
-                a = QMessageBox.question(self, "삭제 확인",  f"{len(item_delete)}개의 항목을 삭제하시겠습니까?", 
-                                 QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-                if a == QMessageBox.Yes:
-                    for mid in item_delete:
-                        ok = self.db.delete_item(mid)
-                else:
-                    QMessageBox.information(self, "취소", "삭제가 취소되었습니다.")
-                    
+        if not item_delete:  
+            QMessageBox.warning(self, "메시지", "삭제할 항목을 선택하세요.")
+            return
+                
+        a = QMessageBox.question(self, "메시지",  f"{len(item_delete)}개의 항목을 삭제하시겠습니까?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if a == QMessageBox.Yes:
+            for mid in item_delete:
+                ok = self.db.delete_item(mid)
+        else:
+            QMessageBox.information(self, "메시지", "삭제가 취소되었습니다.")
+                
         self.load_clothes()
          
             

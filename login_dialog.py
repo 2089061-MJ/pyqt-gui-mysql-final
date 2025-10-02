@@ -71,14 +71,15 @@ class LoginDialog(QDialog):
         uid = self.username.text().strip()
         pw = self.password.text().strip()
         if not uid or not pw:
-            QMessageBox.warning(self, "오류", "아이디와 비밀번호를 모두 입력하세요")
+            QMessageBox.warning(self, "메시지", "아이디와 비밀번호를 모두 입력하세요")
             return
         
         ok = self.db.login_verify_user(uid, pw)
         if ok:
+            QMessageBox.information(self, "메시지", f"{uid}님 환영합니다!")
             self.accept()   # 다이얼로그 통과!
         else:
-            QMessageBox.critical(self, "로그인 실패", "아이디 또는 비밀번호가 올바르지 않습니다. ")
+            QMessageBox.critical(self, "메시지", "아이디 또는 비밀번호가 올바르지 않습니다. ")
             
     def signup(self):
         signup_dialog = SignupDialog()

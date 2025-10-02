@@ -69,15 +69,15 @@ class InsertDialog(QDialog):
         price = self.input_price.text().strip()
         stock = self.input_stock.text().strip()
         if not name or not price or not stock:
-            QMessageBox.warning(self, "오류", "상품명, 가격, 재고량을 모두 입력하세요")
+            QMessageBox.warning(self, "메시지", "상품명, 가격, 재고량을 모두 입력하세요")
             return
         ok = self.db.insert_clothes(name, price, stock)
         if ok:
-            QMessageBox.information(self, "완료", "추가되었습니다.")
+            QMessageBox.information(self, "메시지", "추가되었습니다.")
             self.input_name.clear()
             self.input_price.clear()
             self.input_stock.clear()
             
         else:
-            QMessageBox.critical(self, "실패", "추가 중 오류가 발생했습니다.")
+            QMessageBox.critical(self, "메시지", "추가 중 오류가 발생했습니다.")
         self.accept()

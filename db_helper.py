@@ -48,7 +48,6 @@ class DB:
             except Exception:
                 conn.rollback()
                 return False
-        
             
     def fetch_clothes(self):
         sql = "SELECT * FROM management ORDER BY id"
