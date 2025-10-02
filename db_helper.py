@@ -4,8 +4,8 @@ import pymysql
 DB_CONFIG = dict(
     host = "localhost",
     user = "root",
-    password = "test0123",
-    database = "clothes",
+    password = "비밀번호",
+    database = "데이터베이스 이름",
     charset = "utf8"
 )
 
