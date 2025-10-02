@@ -1,14 +1,16 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem, \
-    QLabel, QLineEdit, QPushButton, QMessageBox, QMenuBar, QAction, QScrollArea
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QIcon
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 from PyQt5.QtCore import Qt
 from db_helper import DB, DB_CONFIG
+from insert_dialog import InsertDialog
+from edit_dialog import EditDialog
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("재고 관리 프로그램(관리자)")
         self.setWindowIcon(QIcon('home.png'))
+        self.resize(500, 300)
         # 윈도우 스타일 설정
         self.setStyleSheet("""
             QMainWindow {
@@ -51,37 +53,17 @@ class MainWindow(QMainWindow):
         vbox = QVBoxLayout(central)
         
         form_box = QHBoxLayout()
-        self.input_name = self.create_line_edit("상품명")
-        self.input_price = self.create_line_edit("가격")
-        self.input_stock = self.create_line_edit("재고량")
-        self.btn_add = self.create_button("추가", self.add_clothes)
+        
+        self.btn_add = self.create_button("추가", self.open_insert_dialog)
         self.btn1_add = self.create_button("선택항목 삭제", self.checked_item_delete)
         self.btn1_add.clicked.connect(self.checked_item_delete)
         
-        form_box1 = QHBoxLayout()
-        self.edit_name = self.create_line_edit("수정할 상품명")
-        self.edit_price = self.create_line_edit("수정할 가격")
-        self.edit_stock = self.create_line_edit("수정할 재고량")
-        self.btn_edit_load = self.create_button("선택항목 불러오기", self.edit_load)
-        self.btn_edit = self.create_button("선택항목 수정", self.checked_item_edit)
+        self.btn_edit = self.create_button("수정하기", self.open_edit_dialog)
         
-        form_box.addWidget(QLabel("상품명"))
-        form_box.addWidget(self.input_name)
-        form_box.addWidget(QLabel("가격"))
-        form_box.addWidget(self.input_price)
-        form_box.addWidget(QLabel("재고량"))
-        form_box.addWidget(self.input_stock)
         form_box.addWidget(self.btn_add)
         form_box.addWidget(self.btn1_add)
+        form_box.addWidget(self.btn_edit)
         
-        form_box1.addWidget(QLabel("수정할 상품명"))
-        form_box1.addWidget(self.edit_name)
-        form_box1.addWidget(QLabel("수정할 가격"))
-        form_box1.addWidget(self.edit_price)
-        form_box1.addWidget(QLabel("수정할 재고량"))
-        form_box1.addWidget(self.edit_stock)
-        form_box1.addWidget(self.btn_edit_load)
-        form_box1.addWidget(self.btn_edit)
         
         self.table = QTableWidget()
         self.table.setColumnCount(5)
@@ -91,12 +73,9 @@ class MainWindow(QMainWindow):
         
         
         vbox.addLayout(form_box)
-        vbox.addLayout(form_box1)
         vbox.addWidget(self.table)
         
         self.load_clothes()
-        
-        self.setMinimumSize(400, 400)
         
     def create_line_edit(self, placeholder_text):
         line_edit = QLineEdit()
@@ -134,8 +113,6 @@ class MainWindow(QMainWindow):
         return button
    
    
-   
-   
     def load_clothes(self):
         rows = self.db.fetch_clothes()
         print(type(rows))
@@ -146,20 +123,26 @@ class MainWindow(QMainWindow):
             self.table.setItem(r, 2, QTableWidgetItem(str(price)))
             self.table.setItem(r, 3, QTableWidgetItem(str(stock)))
             
-            check_item = QTableWidgetItem()
+            check_item = QCheckBox()
             check_item.setCheckState(False)
-            self.table.setItem(r, 4, check_item)
+            check_item.setStyleSheet("""
+                QCheckBox   { 
+                    width: 30px; 
+                    height: 30px; 
+                    margin-left: auto;
+                    margin-right: auto;
+                    margin-top: auto;
+                    margin-bottom: auto;
+            }
+            """)
             
-        self.table.resizeRowsToContents()    
-        self.table.resizeColumnsToContents()
+            self.table.setCellWidget(r, 4, check_item)
+            self.table.resizeColumnsToContents()
+            self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         
-        self.table.setColumnWidth(0, 200)
-        self.table.setColumnWidth(1, 350)
-        self.table.setColumnWidth(2, 200)
-        self.table.setColumnWidth(3, 200)
-        self.table.setColumnWidth(4, 172)
         
-    def checked_item_edit(self):
+        
+    '''def checked_item_edit(self):
         edit_name = self.edit_name.text().strip()
         edit_price = self.edit_price.text().strip()
         edit_stock = self.edit_stock.text().strip()
@@ -176,8 +159,9 @@ class MainWindow(QMainWindow):
             self.edit_stock.clear()
             self.load_clothes()
         else:
-            QMessageBox.critical(self, "실패", "수정 작업중에 오류가 발생하였습니다.")
-    def edit_load(self):
+            QMessageBox.critical(self, "실패", "수정 작업중에 오류가 발생하였습니다.") '''
+            
+    '''def edit_load(self):
         mid = None
         for r in range(self.table.rowCount()):
             check_item = self.table.item(r, 4)
@@ -196,13 +180,13 @@ class MainWindow(QMainWindow):
             self.edit_stock.setText(str(result[3]))
             
         else:
-            QMessageBox.warning(self, "오류", "선택한 항목을 불러오지 못했습니다.")
+            QMessageBox.warning(self, "오류", "선택한 항목을 불러오지 못했습니다.") '''
             
     def checked_item_delete(self):
         item_delete = []
         for r in range(self.table.rowCount()):
-            check_item = self.table.item(r, 4)
-            if check_item.checkState() == 2:
+            check_item = self.table.cellWidget(r, 4)
+            if check_item.checkState() == Qt.Checked:
                 mid = self.table.item(r, 0).text()
                 item_delete.append(mid)
                 
@@ -216,7 +200,7 @@ class MainWindow(QMainWindow):
                     
         self.load_clothes()
         
-    def add_clothes(self):
+    '''def add_clothes(self):
         name = self.input_name.text().strip()
         price = self.input_price.text().strip()
         stock = self.input_stock.text().strip()
@@ -231,4 +215,15 @@ class MainWindow(QMainWindow):
             self.input_stock.clear()
             self.load_clothes()
         else:
-            QMessageBox.critical(self, "실패", "추가 중 오류가 발생했습니다.")
+            QMessageBox.critical(self, "실패", "추가 중 오류가 발생했습니다.") ''' 
+            
+    def open_insert_dialog(self):
+        dialog = InsertDialog()
+        if dialog.exec_() == InsertDialog.Accepted:
+            self.load_clothes()
+            
+            
+    def open_edit_dialog(self):
+        dialog = EditDialog()
+        if dialog.exec_() == EditDialog.Accepted:
+            self.load_clothes()
