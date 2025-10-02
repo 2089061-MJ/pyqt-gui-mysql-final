@@ -28,3 +28,7 @@
 
 <h1><img width="489" height="315" alt="스크린샷 2025-10-02 162631" src="https://github.com/user-attachments/assets/ebbdcf25-ca16-44b7-80c9-5e9cb96bd404" /></h1>
 
+
+
+![bandicam 2025-10-02 14-57-28-934](https://github.com/user-attachments/assets/4c5543fa-6314-4bff-b22f-3969746570c4)
+
