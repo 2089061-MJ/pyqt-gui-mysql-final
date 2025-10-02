@@ -1,4 +1,10 @@
 ------
+사용자 요구사항
+------
+
+### Python 3.9.xx 설치, MySQL 서버 설치, 데이터베이스 스키마(clothes) 생성, 테이블(users, management) 생성
+
+------
 클론 후 사용법
 ------
 
@@ -11,15 +17,6 @@
       $ pip install PyQt5-tools
       $ pip install pymysql
 ### 4. 프로그램 실행
-
-
-
-
-------
-사용자 요구사항
-------
-
-### Python 3.9.xx 설치, MySQL 서버 설치, 데이터베이스 스키마(clothes) 생성, 테이블(users, management) 생성
 
 
 ------
