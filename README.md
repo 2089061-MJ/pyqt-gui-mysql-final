@@ -20,7 +20,7 @@
 
 
 ------
-실행 이미지
+실행 결과
 ------
 <h1><img width="246" height="238" alt="스크린샷 2025-10-02 162600" src="https://github.com/user-attachments/assets/88089508-3bee-4202-b9c0-a6ca571e9327" /></h1>
 
