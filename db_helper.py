@@ -81,7 +81,7 @@ class DB:
                 conn.rollback()
                 return False
         
-    def load_edit(self, mid):
+    '''def load_edit(self, mid):
         sql = "SELECT * FROM management WHERE ID=%s"
         with self.connect() as conn:
             try:
@@ -95,7 +95,8 @@ class DB:
                     
             except Exception:
                 print("수정할 항목 불러오기 오류")
-                return None
+                return None                      
+    '''
         
     def delete_item(self, mid):
         sql = "DELETE FROM management WHERE ID=%s"
